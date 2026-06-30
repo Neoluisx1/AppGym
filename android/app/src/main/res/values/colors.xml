@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Color de fondo del splash screen -->
+    <color name="splash_background">#000000</color>
+    <color name="splash_primary">#F97316</color>
+    <color name="notification_color">#FF6B00</color>
+</resources>

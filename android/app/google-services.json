@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "630536756510",
+    "project_id": "megalifegym-b298f",
+    "storage_bucket": "megalifegym-b298f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:630536756510:android:55796ab2231449427cbd0f",
+        "android_client_info": {
+          "package_name": "com.megalifegym.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOXu8PK91YCYXVW0BteDROk-GvnlXBTN0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
