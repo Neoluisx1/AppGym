@@ -211,11 +211,8 @@ class _SearchTab extends StatelessWidget {
                       },
                     )
                   : null,
-              filled: true,
-              fillColor: Colors.white,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
               ),
             ),
             onChanged: (v) =>
