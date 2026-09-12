@@ -97,6 +97,7 @@ class _AdminPushScreenState extends State<AdminPushScreen> {
               TextFormField(
                 controller: _titleCtrl,
                 maxLength: 100,
+                style: const TextStyle(color: Colors.black87),
                 decoration: InputDecoration(
                   hintText: 'Ej: Promoción especial',
                   filled: true,
@@ -119,6 +120,7 @@ class _AdminPushScreenState extends State<AdminPushScreen> {
                 controller: _messageCtrl,
                 maxLength: 500,
                 maxLines: 4,
+                style: const TextStyle(color: Colors.black87),
                 decoration: InputDecoration(
                   hintText: 'Escribe el contenido de la notificación...',
                   filled: true,
