@@ -17,7 +17,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.megalifegym.app"
-    compileSdk = 35
+    compileSdk = 36
     ndkVersion = "27.0.12077973"
 
     compileOptions {
@@ -33,9 +33,9 @@ android {
     defaultConfig {
         applicationId = "com.megalifegym.app"
         minSdk = 21
-        targetSdk = 35
-        versionCode = 5
-        versionName = "1.1.0"
+        targetSdk = 36
+        versionCode = 10
+        versionName = "1.1.3"
         multiDexEnabled = true
     }
 
@@ -51,6 +51,15 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            ndk {
+                debugSymbolLevel = "FULL"
+            }
         }
     }
 }
