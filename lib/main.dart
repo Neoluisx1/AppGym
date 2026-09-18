@@ -133,7 +133,12 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     _controller.forward();
-    _initialize();
+    // Se difiere hasta después del primer frame: llamar aquí directamente
+    // dispara notifyListeners() (dentro de SettingsProvider.initialize())
+    // mientras el árbol de widgets todavía se está montando por primera vez,
+    // lo que corrompe el árbol de widgets y puede dejar la pantalla sin
+    // responder a toques.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _initialize());
   }
 
   @override
@@ -145,7 +150,10 @@ class _SplashScreenState extends State<SplashScreen>
   Future<void> _initialize() async {
     final settingsProvider = context.read<SettingsProvider>();
     await settingsProvider.initialize();
-    ApiService().updateBaseUrl(settingsProvider.serverUrl);
+    // Solo se sobreescribe la URL de producción si el usuario configuró una manualmente (debug)
+    if (settingsProvider.isConfigured) {
+      ApiService().updateBaseUrl(settingsProvider.serverUrl);
+    }
 
     // Cargar branding del gimnasio desde el backend
     final config = await ApiService().fetchGymConfig();

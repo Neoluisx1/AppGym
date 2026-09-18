@@ -177,7 +177,7 @@ class _TrainerProgressFormScreenState extends State<TrainerProgressFormScreen> {
             _sectionTitle('Medidas Corporales (cm)'),
             _row([_numField('Pecho', _chestCtrl), _numField('Cintura', _waistCtrl)]),
             _row([_numField('Caderas', _hipsCtrl), _numField('Brazos', _armsCtrl)]),
-            _numField('Muslos', _thighsCtrl),
+            _row([_numField('Muslos', _thighsCtrl)]),
             const SizedBox(height: AppTheme.spacing20),
 
             _sectionTitle('Fotos de Progreso'),

@@ -151,7 +151,7 @@ class _TrainerEvaluationFormScreenState extends State<TrainerEvaluationFormScree
               _numField('Grasa corporal %', _bodyFatCtrl),
               _numField('Masa muscular (kg)', _muscleMassCtrl),
             ]),
-            _numField('Grasa visceral', _visceralFatCtrl),
+            _row([_numField('Grasa visceral', _visceralFatCtrl)]),
             const SizedBox(height: AppTheme.spacing20),
 
             _sectionTitle('Medidas (cm)'),
@@ -163,7 +163,7 @@ class _TrainerEvaluationFormScreenState extends State<TrainerEvaluationFormScree
 
             _sectionTitle('Condición Física'),
             _row([_intField('Flexiones', _pushUpsCtrl), _intField('Abdominales', _sitUpsCtrl)]),
-            _numField('Flexibilidad (cm)', _flexCtrl),
+            _row([_numField('Flexibilidad (cm)', _flexCtrl)]),
             const SizedBox(height: AppTheme.spacing20),
 
             _sectionTitle('Signos Vitales'),
@@ -171,7 +171,7 @@ class _TrainerEvaluationFormScreenState extends State<TrainerEvaluationFormScree
               _intField('Presión Sistólica', _bpSysCtrl),
               _intField('Presión Diastólica', _bpDiaCtrl),
             ]),
-            _intField('Frecuencia cardíaca en reposo', _hrCtrl),
+            _row([_intField('Frecuencia cardíaca en reposo', _hrCtrl)]),
             const SizedBox(height: AppTheme.spacing20),
 
             _sectionTitle('Observaciones'),
@@ -245,10 +245,8 @@ class _TrainerEvaluationFormScreenState extends State<TrainerEvaluationFormScree
         decoration: _decor(label),
       );
 
-  Widget _row(List<Widget> children) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: -4),
-        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: children),
-      );
+  Widget _row(List<Widget> children) =>
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: children);
 
   InputDecoration _decor(String label, {Widget? suffix}) => InputDecoration(
         labelText: label,
