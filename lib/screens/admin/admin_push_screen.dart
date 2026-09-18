@@ -9,15 +9,34 @@ class AdminPushScreen extends StatefulWidget {
   State<AdminPushScreen> createState() => _AdminPushScreenState();
 }
 
+class _PushTarget {
+  final String value;
+  final String label;
+  final IconData icon;
+
+  const _PushTarget(this.value, this.label, this.icon);
+}
+
+const _pushTargets = [
+  _PushTarget('all', 'Todos los clientes', Icons.groups_rounded),
+  _PushTarget('expiring', 'Membresías por vencer', Icons.schedule_rounded),
+  _PushTarget('expired', 'Membresías vencidas', Icons.event_busy_rounded),
+  _PushTarget('instructors', 'Solo instructores', Icons.sports_gymnastics_rounded),
+];
+
 class _AdminPushScreenState extends State<AdminPushScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleCtrl = TextEditingController();
   final _messageCtrl = TextEditingController();
+  final _daysCtrl = TextEditingController(text: '7');
+
+  String _target = 'all';
 
   @override
   void dispose() {
     _titleCtrl.dispose();
     _messageCtrl.dispose();
+    _daysCtrl.dispose();
     super.dispose();
   }
 
@@ -25,23 +44,24 @@ class _AdminPushScreenState extends State<AdminPushScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final provider = context.read<AdminProvider>();
-    final ok = await provider.sendPushNotification(
+    final result = await provider.sendPushNotification(
       title: _titleCtrl.text.trim(),
       message: _messageCtrl.text.trim(),
+      target: _target,
+      days: _target == 'expiring' ? int.tryParse(_daysCtrl.text) ?? 7 : null,
     );
 
     if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(ok
-            ? 'Notificación enviada a todos los clientes'
-            : 'Error al enviar notificación'),
-        backgroundColor: ok ? Colors.green : Colors.red,
+        content: Text(result.message ??
+            (result.success ? 'Notificación enviada' : 'Error al enviar notificación')),
+        backgroundColor: result.success ? Colors.green : Colors.red,
       ),
     );
 
-    if (ok) {
+    if (result.success) {
       _titleCtrl.clear();
       _messageCtrl.clear();
     }
@@ -50,6 +70,7 @@ class _AdminPushScreenState extends State<AdminPushScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AdminProvider>();
+    final selected = _pushTargets.firstWhere((t) => t.value == _target);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
@@ -81,7 +102,7 @@ class _AdminPushScreenState extends State<AdminPushScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Envía una notificación push a todos los clientes activos con la app instalada.',
+                        'Envía una notificación push al grupo que elijas abajo.',
                         style: TextStyle(
                             color: Colors.orange.shade800, fontSize: 13),
                       ),
@@ -89,6 +110,67 @@ class _AdminPushScreenState extends State<AdminPushScreen> {
                   ],
                 ),
               ),
+              const SizedBox(height: 24),
+              const Text('Enviar a',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600, fontSize: 14)),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: _pushTargets.map((t) {
+                  final isSelected = t.value == _target;
+                  return ChoiceChip(
+                    selected: isSelected,
+                    onSelected: (_) => setState(() => _target = t.value),
+                    avatar: Icon(
+                      t.icon,
+                      size: 18,
+                      color: isSelected ? Colors.white : Colors.orange.shade700,
+                    ),
+                    label: Text(t.label),
+                    labelStyle: TextStyle(
+                      color: isSelected ? Colors.white : Colors.black87,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    selectedColor: Colors.orange.shade700,
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      side: BorderSide(
+                        color: isSelected ? Colors.orange.shade700 : Colors.grey.shade300,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+              if (_target == 'expiring') ...[
+                const SizedBox(height: 16),
+                const Text('Vencen dentro de (días)',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600, fontSize: 14)),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: _daysCtrl,
+                  keyboardType: TextInputType.number,
+                  style: const TextStyle(color: Colors.black87),
+                  decoration: InputDecoration(
+                    hintText: 'Ej: 7',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  validator: (v) {
+                    if (_target != 'expiring') return null;
+                    final n = int.tryParse(v ?? '');
+                    if (n == null || n < 1) return 'Ingresa un número de días válido';
+                    return null;
+                  },
+                ),
+              ],
               const SizedBox(height: 24),
               const Text('Título',
                   style: TextStyle(
@@ -149,7 +231,7 @@ class _AdminPushScreenState extends State<AdminPushScreen> {
                       : const Icon(Icons.send_rounded),
                   label: Text(provider.sendingPush
                       ? 'Enviando...'
-                      : 'Enviar a todos los clientes'),
+                      : 'Enviar a: ${selected.label}'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange.shade700,
                     foregroundColor: Colors.white,

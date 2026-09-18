@@ -143,3 +143,106 @@ class AdminSearchClient {
     );
   }
 }
+
+class AdminTrainerOption {
+  final int id;
+  final String name;
+  final String? specialty;
+
+  AdminTrainerOption({required this.id, required this.name, this.specialty});
+
+  factory AdminTrainerOption.fromJson(Map<String, dynamic> json) {
+    return AdminTrainerOption(
+      id: json['id'] ?? 0,
+      name: json['name'] ?? 'Sin nombre',
+      specialty: json['specialty'],
+    );
+  }
+}
+
+class AdminClientMembership {
+  final String name;
+  final bool isActive;
+  final String? startDate;
+  final String? endDate;
+  final int? daysRemaining;
+
+  AdminClientMembership({
+    required this.name,
+    required this.isActive,
+    this.startDate,
+    this.endDate,
+    this.daysRemaining,
+  });
+
+  factory AdminClientMembership.fromJson(Map<String, dynamic> json) {
+    return AdminClientMembership(
+      name: json['name'] ?? '',
+      isActive: json['is_active'] == true,
+      startDate: json['start_date'],
+      endDate: json['end_date'],
+      daysRemaining: json['days_remaining'],
+    );
+  }
+}
+
+class AdminClientTrainer {
+  final int id;
+  final String name;
+
+  AdminClientTrainer({required this.id, required this.name});
+
+  factory AdminClientTrainer.fromJson(Map<String, dynamic> json) {
+    return AdminClientTrainer(id: json['id'] ?? 0, name: json['name'] ?? 'Sin nombre');
+  }
+}
+
+class AdminClientDetail {
+  final int id;
+  final String name;
+  final String? email;
+  final String? photo;
+  final String? document;
+  final String? phone;
+  final bool isActive;
+  final int points;
+  final AdminClientMembership? membership;
+  final AdminClientTrainer? trainer;
+  final List<AdminAttendanceRecord> attendances;
+
+  AdminClientDetail({
+    required this.id,
+    required this.name,
+    this.email,
+    this.photo,
+    this.document,
+    this.phone,
+    required this.isActive,
+    required this.points,
+    this.membership,
+    this.trainer,
+    required this.attendances,
+  });
+
+  factory AdminClientDetail.fromJson(Map<String, dynamic> json) {
+    return AdminClientDetail(
+      id: json['id'] ?? 0,
+      name: json['name'] ?? 'Sin nombre',
+      email: json['email'],
+      photo: json['photo'],
+      document: json['document'],
+      phone: json['phone'],
+      isActive: json['is_active'] == true,
+      points: json['points'] ?? 0,
+      membership: json['membership'] != null
+          ? AdminClientMembership.fromJson(json['membership'])
+          : null,
+      trainer: json['trainer'] != null
+          ? AdminClientTrainer.fromJson(json['trainer'])
+          : null,
+      attendances: (json['attendances'] as List? ?? [])
+          .map((e) => AdminAttendanceRecord.fromJson({...e, 'client_id': json['id']}))
+          .toList(),
+    );
+  }
+}

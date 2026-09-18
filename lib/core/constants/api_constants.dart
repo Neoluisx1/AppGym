@@ -102,6 +102,9 @@ class ApiConstants {
   static const String adminExpiringMemberships= '/admin/expiring-memberships';
   static const String adminClientsSearch      = '/admin/clients/search';
   static const String adminPushNotification   = '/admin/push-notification';
+  static const String adminTrainers           = '/admin/trainers';
+  static String adminClientDetail(int id) => '/admin/clients/$id';
+  static String adminAssignTrainer(int id) => '/admin/clients/$id/assign-trainer';
 
   // Trainer endpoints
   static const String trainerDashboard = '/trainer/dashboard';

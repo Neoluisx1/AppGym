@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../../providers/admin_provider.dart';
 import '../../models/admin_model.dart';
+import 'admin_client_detail_screen.dart';
 
 class AdminClientsScreen extends StatefulWidget {
   const AdminClientsScreen({super.key});
@@ -136,6 +137,11 @@ class _ExpiringClientCard extends StatelessWidget {
         side: BorderSide(color: color.withValues(alpha: 0.3)),
       ),
       child: ListTile(
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => AdminClientDetailScreen(clientId: client.id),
+          ),
+        ),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: CircleAvatar(
@@ -265,6 +271,11 @@ class _SearchClientCard extends StatelessWidget {
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => AdminClientDetailScreen(clientId: client.id),
+          ),
+        ),
         leading: CircleAvatar(
           backgroundImage:
               client.photo != null ? NetworkImage(client.photo!) : null,
