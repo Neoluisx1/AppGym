@@ -1,5 +1,6 @@
 // 🌐 API Service - Cliente HTTP con Dio
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../constants/api_constants.dart';
 
@@ -50,14 +51,18 @@ class ApiService {
       ),
     );
     
-    // Interceptor para logs (solo en debug)
-    _dio.interceptors.add(
-      LogInterceptor(
-        requestBody: true,
-        responseBody: true,
-        error: true,
-      ),
-    );
+    // Interceptor para logs (solo en debug; nunca en builds de release)
+    if (kDebugMode) {
+      _dio.interceptors.add(
+        LogInterceptor(
+          requestBody: true,
+          responseBody: true,
+          requestHeader: false,
+          responseHeader: false,
+          error: true,
+        ),
+      );
+    }
   }
   
   // Getter para acceder al Dio instance

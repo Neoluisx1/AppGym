@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -8,9 +9,11 @@ import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../core/services/api_service.dart';
+import '../admin/admin_main_screen.dart';
 import '../client/promotions_screen.dart';
 import '../trainer/trainer_main_screen.dart';
 import '../settings/server_config_screen.dart';
+import 'two_factor_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -42,11 +45,13 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!mounted) return;
 
     if (success) {
-      final isTrainer = context.read<AuthProvider>().isTrainer;
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => isTrainer ? const TrainerMainScreen() : const PromotionsScreen(),
-        ),
+      _navigateAfterLogin(context.read<AuthProvider>());
+      return;
+    }
+
+    if (authProvider.requiresTwoFactor) {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const TwoFactorScreen()),
       );
       return;
     }
@@ -82,6 +87,20 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       context.showErrorSnackBar(message);
     }
+  }
+
+  void _navigateAfterLogin(AuthProvider authProvider) {
+    Widget destination;
+    if (authProvider.isAdmin) {
+      destination = const AdminMainScreen();
+    } else if (authProvider.isTrainer) {
+      destination = const TrainerMainScreen();
+    } else {
+      destination = const PromotionsScreen();
+    }
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => destination),
+    );
   }
 
   void _showContactDialog({
@@ -377,9 +396,10 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
 
-          // ── Botón configuración ──────────────────────────────────────────────
-          SafeArea(
-            child: Align(
+          // ── Botón configuración (solo en builds de debug) ──────────────────────
+          if (kDebugMode)
+            SafeArea(
+              child: Align(
               alignment: Alignment.topRight,
               child: Padding(
                 padding: const EdgeInsets.all(12),

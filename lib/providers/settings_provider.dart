@@ -1,12 +1,13 @@
-// ⚙️ Settings Provider - Configuración Dinámica del Servidor
+// ⚙️ Settings Provider - Configuración Dinámica del Servidor (solo para builds de debug)
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../core/constants/env_config.dart';
 
 class SettingsProvider extends ChangeNotifier {
   static const String _keyServerUrl = 'server_url';
   static const String _keyConfigPassword = 'config_password';
-  static const String _defaultUrl = 'http://10.0.2.2:8000/api/v1'; // Emulador por defecto
-  static const String _defaultPassword = 'admin123'; // Contraseña por defecto
+  static const String _defaultUrl = EnvConfig.productionUrl; // Servidor real de producción
+  static const String _defaultPassword = 'admin123'; // Contraseña por defecto (solo debug)
   
   String _serverUrl = _defaultUrl;
   String _configPassword = _defaultPassword;
@@ -54,7 +55,16 @@ class SettingsProvider extends ChangeNotifier {
       if (url.isEmpty) {
         return false;
       }
-      
+
+      // Solo permitir HTTPS salvo direcciones locales (emulador/red local para desarrollo)
+      final isLocal = url.startsWith('http://10.0.2.2') ||
+          url.startsWith('http://localhost') ||
+          url.startsWith('http://127.0.0.1') ||
+          url.startsWith('http://192.168.');
+      if (!url.startsWith('https://') && !isLocal) {
+        return false;
+      }
+
       // Asegurar que termine con /api/v1
       String cleanUrl = url.trim();
       if (!cleanUrl.endsWith('/api/v1')) {

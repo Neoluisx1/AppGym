@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Builds de release: solo HTTPS -->
+    <base-config cleartextTrafficPermitted="false" />
+
+    <!-- Builds de debug (flutter run/debug APK): permite HTTP para emulador/red local -->
+    <debug-overrides>
+        <base-config cleartextTrafficPermitted="true" />
+    </debug-overrides>
+</network-security-config>

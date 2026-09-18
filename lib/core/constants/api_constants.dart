@@ -12,6 +12,7 @@ class ApiConstants {
   // Auth endpoints
   static const String login = '/auth/login';
   static const String loginByDocument = '/auth/login-document';
+  static const String verifyStaffTwoFactor = '/auth/login-document/verify-2fa';
   static const String logout = '/auth/logout';
   static const String me = '/auth/me';
   static const String refreshToken = '/auth/refresh';

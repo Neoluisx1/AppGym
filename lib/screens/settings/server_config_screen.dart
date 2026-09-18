@@ -190,16 +190,6 @@ class _ServerConfigScreenState extends State<ServerConfigScreen> {
             ),
           ),
 
-          const SizedBox(height: 16),
-
-          // Contraseña por defecto (solo en debug)
-          Text(
-            'Contraseña por defecto: admin123',
-            style: TextStyle(
-              fontSize: 12,
-              color: context.textSecondCol,
-            ),
-          ),
         ],
       ),
     );

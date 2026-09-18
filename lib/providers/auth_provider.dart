@@ -15,6 +15,10 @@ class AuthProvider extends ChangeNotifier {
   String? _errorType;    // 'not_found' | 'membership_expired' | 'inactive' | 'error'
   String? _errorWhatsapp;
 
+  // Verificación en dos pasos (solo admin/entrenador, login por documento)
+  bool _requiresTwoFactor = false;
+  String? _twoFactorChallenge;
+
   // Getters
   UserModel? get user => _user;
   bool get isLoading => _isLoading;
@@ -25,6 +29,7 @@ class AuthProvider extends ChangeNotifier {
   bool get isClient => _user?.client != null;
   bool get isTrainer => _user?.trainer != null || _user?.role?.name == 'instructor';
   bool get isAdmin => _user?.role?.name == 'admin';
+  bool get requiresTwoFactor => _requiresTwoFactor;
   
   // ============================================
   // LOGIN
@@ -137,6 +142,8 @@ class AuthProvider extends ChangeNotifier {
     _error = null;
     _errorType = null;
     _errorWhatsapp = null;
+    _requiresTwoFactor = false;
+    _twoFactorChallenge = null;
     notifyListeners();
 
     try {
@@ -150,6 +157,18 @@ class AuthProvider extends ChangeNotifier {
       );
 
       if (response.data['success'] == true) {
+        // Cuentas de administrador/entrenador: el backend no entrega el token
+        // todavía, sino un desafío que hay que confirmar con el código de
+        // verificación en dos pasos.
+        if (response.data['requires_2fa'] == true) {
+          final data = response.data['data'] as Map?;
+          _twoFactorChallenge = data?['challenge'] as String?;
+          _requiresTwoFactor = true;
+          _isLoading = false;
+          notifyListeners();
+          return false;
+        }
+
         final data = response.data['data'];
         await _apiService.saveToken(data['token']);
         _user = UserModel.fromJson(data['user']);
@@ -191,6 +210,91 @@ class AuthProvider extends ChangeNotifier {
     if (m.contains('membres') || m.contains('vencid') || m.contains('renov')) return 'membership_expired';
     if (m.contains('inactiv')) return 'inactive';
     return null;
+  }
+
+  // ============================================
+  // VERIFICACIÓN EN DOS PASOS (admin/entrenador)
+  // ============================================
+
+  /// Confirma el código de verificación en dos pasos del desafío generado por
+  /// [loginByDocumentSafe] y, si es correcto, completa el login.
+  Future<bool> verifyTwoFactor({
+    required String code,
+    String? deviceName,
+  }) async {
+    _isLoading = true;
+    _error = null;
+    _errorType = null;
+    notifyListeners();
+
+    final challenge = _twoFactorChallenge;
+    if (challenge == null) {
+      _error = 'La verificación expiró. Vuelve a iniciar sesión.';
+      _isLoading = false;
+      _requiresTwoFactor = false;
+      notifyListeners();
+      return false;
+    }
+
+    try {
+      final response = await _apiService.dio.post(
+        ApiConstants.verifyStaffTwoFactor,
+        data: {
+          'challenge': challenge,
+          'code': code,
+          'device_name': deviceName ?? 'mobile-app',
+        },
+      );
+
+      if (response.data['success'] == true) {
+        final data = response.data['data'];
+        await _apiService.saveToken(data['token']);
+        _user = UserModel.fromJson(data['user']);
+        _isAuthenticated = true;
+        _requiresTwoFactor = false;
+        _twoFactorChallenge = null;
+        _isLoading = false;
+        notifyListeners();
+        _registerFcm();
+        return true;
+      }
+
+      _error = 'No se pudo verificar el código.';
+    } on DioException catch (e) {
+      final data = e.response?.data;
+      if (data is Map) {
+        _error = data['message'] as String? ?? 'Código inválido.';
+        _errorType = data['error_type'] as String?;
+        // Si el desafío expiró, hay que reiniciar el login desde cero.
+        if (_errorType == 'challenge_expired') {
+          _requiresTwoFactor = false;
+          _twoFactorChallenge = null;
+        }
+      } else if (e.type == DioExceptionType.unknown ||
+                 e.type == DioExceptionType.connectionTimeout ||
+                 e.type == DioExceptionType.sendTimeout ||
+                 e.type == DioExceptionType.receiveTimeout) {
+        _error = 'Error de conexión. Verifica tu internet.';
+      } else {
+        _error = 'No se pudo verificar el código.';
+      }
+    } catch (e) {
+      _error = 'Error inesperado. Intenta de nuevo.';
+    }
+
+    _isLoading = false;
+    notifyListeners();
+    return false;
+  }
+
+  /// Cancela el desafío de verificación en dos pasos en curso (p. ej. si el
+  /// usuario vuelve atrás desde la pantalla del código).
+  void cancelTwoFactor() {
+    _requiresTwoFactor = false;
+    _twoFactorChallenge = null;
+    _error = null;
+    _errorType = null;
+    notifyListeners();
   }
 
   // ============================================
