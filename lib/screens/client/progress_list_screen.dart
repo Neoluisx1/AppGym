@@ -5,6 +5,7 @@ import '../../config/theme.dart';
 import '../../providers/progress_provider.dart';
 import '../../models/progress_model.dart';
 import 'package:intl/intl.dart';
+import '../../widgets/fade_slide_in.dart';
 import 'add_progress_screen.dart';
 
 class ProgressListScreen extends StatefulWidget {
@@ -83,7 +84,10 @@ class _ProgressListScreenState extends State<ProgressListScreen> with SingleTick
         itemCount: provider.progressList.length,
         itemBuilder: (context, index) {
           final progress = provider.progressList[index];
-          return _buildProgressCard(progress);
+          return FadeSlideIn(
+            delay: Duration(milliseconds: (index % 6) * 60),
+            child: _buildProgressCard(progress),
+          );
         },
       ),
     );
@@ -185,7 +189,10 @@ class _ProgressListScreenState extends State<ProgressListScreen> with SingleTick
         itemCount: provider.goals.length,
         itemBuilder: (context, index) {
           final goal = provider.goals[index];
-          return _buildGoalCard(goal);
+          return FadeSlideIn(
+            delay: Duration(milliseconds: (index % 6) * 60),
+            child: _buildGoalCard(goal),
+          );
         },
       ),
     );

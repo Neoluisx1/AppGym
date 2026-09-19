@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import '../../config/theme.dart';
 import '../../providers/points_provider.dart';
 import '../../models/point_transaction_model.dart';
+import '../../widgets/animated_stat_counter.dart';
+import '../../widgets/fade_slide_in.dart';
 
 class PointsHistoryScreen extends StatefulWidget {
   const PointsHistoryScreen({super.key});
@@ -76,8 +78,8 @@ class _PointsHistoryScreenState extends State<PointsHistoryScreen> {
                       'Puntos acumulados',
                       style: TextStyle(color: Colors.white70, fontSize: 13),
                     ),
-                    Text(
-                      '${provider.totalPoints}',
+                    AnimatedStatCounter(
+                      value: provider.totalPoints,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 32,
@@ -110,7 +112,10 @@ class _PointsHistoryScreenState extends State<PointsHistoryScreen> {
                                 child: Center(child: CircularProgressIndicator()),
                               );
                             }
-                            return _buildTransactionCard(provider.transactions[index]);
+                            return FadeSlideIn(
+                              delay: Duration(milliseconds: (index % 6) * 60),
+                              child: _buildTransactionCard(provider.transactions[index]),
+                            );
                           },
                         ),
                       ),

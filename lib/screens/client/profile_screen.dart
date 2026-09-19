@@ -14,6 +14,7 @@ import 'nutrition_screen.dart';
 import 'chat_screen.dart';
 import 'surveys_screen.dart';
 import '../../providers/chat_provider.dart';
+import '../../widgets/vip_badge.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -201,6 +202,9 @@ class ProfileScreen extends StatelessWidget {
                             color: user.client!.membership!.isActive
                                 ? AppTheme.successColor
                                 : AppTheme.errorColor,
+                            trailing: user.client!.membership!.isActive
+                                ? const VipBadge(fontSize: 9, compact: true)
+                                : null,
                           ),
                         ),
                     ],
@@ -374,6 +378,7 @@ class ProfileScreen extends StatelessWidget {
     required String value,
     required String label,
     required Color color,
+    Widget? trailing,
   }) {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacing16),
@@ -397,7 +402,18 @@ class ProfileScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(value, style: context.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)),
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        value,
+                        style: context.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    if (trailing != null) ...[const SizedBox(width: 6), trailing],
+                  ],
+                ),
                 Text(label, style: context.textTheme.bodySmall, maxLines: 1, overflow: TextOverflow.ellipsis),
               ],
             ),

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../../providers/admin_provider.dart';
 import '../../models/admin_model.dart';
+import '../../widgets/fade_slide_in.dart';
 
 class AdminAttendanceScreen extends StatelessWidget {
   const AdminAttendanceScreen({super.key});
@@ -80,7 +81,7 @@ class AdminAttendanceScreen extends StatelessWidget {
       onRefresh: () => context.read<AdminProvider>().fetchTodayAttendance(),
       child: Column(
         children: [
-          Container(
+          FadeSlideIn(child: Container(
             color: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Row(
@@ -101,14 +102,16 @@ class AdminAttendanceScreen extends StatelessWidget {
                 ),
               ],
             ),
-          ),
+          )),
           Expanded(
             child: ListView.separated(
               padding: const EdgeInsets.all(12),
               itemCount: provider.todayAttendance.length,
               separatorBuilder: (_, __) => const SizedBox(height: 8),
-              itemBuilder: (context, index) =>
-                  _AttendanceCard(record: provider.todayAttendance[index]),
+              itemBuilder: (context, index) => FadeSlideIn(
+                delay: Duration(milliseconds: (index % 6) * 60),
+                child: _AttendanceCard(record: provider.todayAttendance[index]),
+              ),
             ),
           ),
         ],

@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../config/theme.dart';
 import '../../providers/store_provider.dart';
 import '../../models/product_model.dart';
+import '../../widgets/fade_slide_in.dart';
 
 class MyRedemptionsScreen extends StatefulWidget {
   const MyRedemptionsScreen({Key? key}) : super(key: key);
@@ -41,7 +42,10 @@ class _MyRedemptionsScreenState extends State<MyRedemptionsScreen> {
                       itemCount: storeProvider.redemptions.length,
                       itemBuilder: (context, index) {
                         final redemption = storeProvider.redemptions[index];
-                        return _buildRedemptionCard(redemption);
+                        return FadeSlideIn(
+                          delay: Duration(milliseconds: (index % 6) * 60),
+                          child: _buildRedemptionCard(redemption),
+                        );
                       },
                     ),
             ),

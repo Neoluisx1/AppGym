@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/admin_provider.dart';
+import '../../widgets/fade_slide_in.dart';
 
 class AdminPushScreen extends StatefulWidget {
   const AdminPushScreen({super.key});
@@ -88,26 +89,28 @@ class _AdminPushScreenState extends State<AdminPushScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.orange.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.orange.shade200),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.campaign_rounded,
-                        color: Colors.orange.shade700, size: 28),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'Envía una notificación push al grupo que elijas abajo.',
-                        style: TextStyle(
-                            color: Colors.orange.shade800, fontSize: 13),
+              FadeSlideIn(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.orange.shade200),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.campaign_rounded,
+                          color: Colors.orange.shade700, size: 28),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'Envía una notificación push al grupo que elijas abajo.',
+                          style: TextStyle(
+                              color: Colors.orange.shade800, fontSize: 13),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 24),

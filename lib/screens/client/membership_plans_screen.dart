@@ -1,10 +1,14 @@
 // 💳 Membership Plans Screen
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import '../../config/theme.dart';
 import '../../providers/membership_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../models/membership_plan_model.dart';
+import '../../widgets/fade_slide_in.dart';
+import '../../widgets/vip_badge.dart';
+import '../../widgets/premium_card_glow.dart';
 
 class MembershipPlansScreen extends StatefulWidget {
   const MembershipPlansScreen({Key? key}) : super(key: key);
@@ -42,18 +46,27 @@ class _MembershipPlansScreenState extends State<MembershipPlansScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (currentMembership != null) ...[
-                      _buildCurrentMembershipCard(currentMembership),
+                      PremiumCardGlow(
+                        radius: AppTheme.radiusXLarge,
+                        child: _buildCurrentMembershipCard(currentMembership),
+                      ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0),
                       SizedBox(height: AppTheme.spacing24),
                     ],
-                    
-                    Text(
-                      'Planes Disponibles',
-                      style: context.textTheme.headlineSmall,
+
+                    FadeSlideIn(
+                      delay: 100.ms,
+                      child: Text(
+                        'Planes Disponibles',
+                        style: context.textTheme.headlineSmall,
+                      ),
                     ),
                     SizedBox(height: AppTheme.spacing16),
-                    
-                    ...membershipProvider.plans.map((plan) => 
-                      _buildPlanCard(plan, membershipProvider)
+
+                    ...membershipProvider.plans.asMap().entries.map((entry) =>
+                      FadeSlideIn(
+                        delay: Duration(milliseconds: 150 + entry.key * 80),
+                        child: _buildPlanCard(entry.value, membershipProvider),
+                      )
                     ),
                   ],
                 ),
@@ -66,7 +79,7 @@ class _MembershipPlansScreenState extends State<MembershipPlansScreen> {
     return Container(
       padding: EdgeInsets.all(AppTheme.spacing20),
       decoration: BoxDecoration(
-        gradient: AppTheme.orangeGradient,
+        gradient: AppTheme.vipGradient,
         borderRadius: BorderRadius.circular(AppTheme.radiusXLarge),
         boxShadow: AppTheme.glowShadow,
       ),
@@ -77,13 +90,16 @@ class _MembershipPlansScreenState extends State<MembershipPlansScreen> {
             children: [
               Icon(Icons.card_membership, color: Colors.white, size: 28),
               SizedBox(width: AppTheme.spacing12),
-              Text(
-                'TU MEMBRESÍA ACTUAL',
-                style: context.textTheme.labelSmall?.copyWith(
-                  color: Colors.white.withValues(alpha: 0.9),
-                  letterSpacing: 1.5,
+              Expanded(
+                child: Text(
+                  'TU MEMBRESÍA ACTUAL',
+                  style: context.textTheme.labelSmall?.copyWith(
+                    color: Colors.white.withValues(alpha: 0.9),
+                    letterSpacing: 1.5,
+                  ),
                 ),
               ),
+              const VipBadge(),
             ],
           ),
           SizedBox(height: AppTheme.spacing12),
@@ -115,10 +131,10 @@ class _MembershipPlansScreenState extends State<MembershipPlansScreen> {
         color: context.cardColor,
         borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
         border: Border.all(
-          color: plan.isPopular ? AppTheme.primaryOrange : context.borderCol,
+          color: plan.isPopular ? AppTheme.accentGold : context.borderCol,
           width: plan.isPopular ? 2 : 1,
         ),
-        boxShadow: plan.isPopular ? AppTheme.glowShadow : AppTheme.cardShadow,
+        boxShadow: plan.isPopular ? AppTheme.goldGlowShadow : AppTheme.cardShadow,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -128,20 +144,27 @@ class _MembershipPlansScreenState extends State<MembershipPlansScreen> {
               width: double.infinity,
               padding: EdgeInsets.symmetric(vertical: AppTheme.spacing8),
               decoration: BoxDecoration(
-                gradient: AppTheme.orangeGradient,
+                gradient: AppTheme.vipGradient,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(AppTheme.radiusLarge),
                   topRight: Radius.circular(AppTheme.radiusLarge),
                 ),
               ),
-              child: Text(
-                '⭐ MÁS POPULAR',
-                textAlign: TextAlign.center,
-                style: context.textTheme.labelSmall?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.2,
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'MÁS POPULAR',
+                    textAlign: TextAlign.center,
+                    style: context.textTheme.labelSmall?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  const VipBadge(fontSize: 10),
+                ],
               ),
             ),
           

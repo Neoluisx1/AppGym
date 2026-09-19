@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../models/admin_model.dart';
 import '../../providers/admin_provider.dart';
+import '../../widgets/fade_slide_in.dart';
 
 class AdminClientDetailScreen extends StatefulWidget {
   final int clientId;
@@ -189,9 +191,9 @@ class _AdminClientDetailScreenState extends State<AdminClientDetailScreen> {
                       child: ListView(
                         padding: const EdgeInsets.all(16),
                         children: [
-                          _buildProfileCard(client),
+                          FadeSlideIn(child: _buildProfileCard(client)),
                           const SizedBox(height: 16),
-                          _buildTrainerCard(client),
+                          FadeSlideIn(delay: 100.ms, child: _buildTrainerCard(client)),
                           const SizedBox(height: 20),
                           const Text('Historial de Asistencias',
                               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
@@ -205,20 +207,23 @@ class _AdminClientDetailScreenState extends State<AdminClientDetailScreen> {
                               ),
                             )
                           else
-                            ...client.attendances.map((a) => Card(
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12)),
-                                  child: ListTile(
-                                    leading: const Icon(Icons.how_to_reg_rounded,
-                                        color: Colors.green),
-                                    title: Text(_formatDate(a.checkIn)),
-                                    subtitle: Text(
-                                        'Entrada: ${_formatTime(a.checkIn)}   Salida: ${_formatTime(a.checkOut)}'),
-                                    trailing: a.duration != null
-                                        ? Text('${a.duration} min',
-                                            style: const TextStyle(fontWeight: FontWeight.bold))
-                                        : null,
+                            ...client.attendances.asMap().entries.map((entry) => FadeSlideIn(
+                                  delay: Duration(milliseconds: 150 + (entry.key % 6) * 60),
+                                  child: Card(
+                                    elevation: 0,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12)),
+                                    child: ListTile(
+                                      leading: const Icon(Icons.how_to_reg_rounded,
+                                          color: Colors.green),
+                                      title: Text(_formatDate(entry.value.checkIn)),
+                                      subtitle: Text(
+                                          'Entrada: ${_formatTime(entry.value.checkIn)}   Salida: ${_formatTime(entry.value.checkOut)}'),
+                                      trailing: entry.value.duration != null
+                                          ? Text('${entry.value.duration} min',
+                                              style: const TextStyle(fontWeight: FontWeight.bold))
+                                          : null,
+                                    ),
                                   ),
                                 )),
                         ],

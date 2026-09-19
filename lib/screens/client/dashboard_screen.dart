@@ -6,6 +6,9 @@ import '../../providers/dashboard_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/group_class_provider.dart';
 import '../../providers/notification_provider.dart';
+import '../../widgets/vip_badge.dart';
+import '../../widgets/animated_stat_counter.dart';
+import '../../widgets/premium_card_glow.dart';
 import 'package:intl/intl.dart';
 import 'membership_plans_screen.dart';
 import 'group_classes_screen.dart';
@@ -125,7 +128,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   children: [
                     // Membership card
                     (dashboard?.membership != null
-                            ? _buildMembershipCard(dashboard!.membership!)
+                            ? (dashboard!.membership!.isActive
+                                ? PremiumCardGlow(
+                                    radius: AppTheme.radiusXLarge,
+                                    child: _buildMembershipCard(dashboard.membership!),
+                                  )
+                                : _buildMembershipCard(dashboard.membership!))
                             : _buildNoMembershipCard())
                         .animate()
                         .fadeIn(duration: 400.ms)
@@ -155,7 +163,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         Expanded(
                           child: _buildStatCard(
                             icon: Icons.fitness_center_rounded,
-                            value: '${dashboard?.stats.thisMonthAttendances ?? 0}',
+                            value: dashboard?.stats.thisMonthAttendances ?? 0,
                             label: 'Asistencias',
                             sublabel: 'Este mes',
                             color: AppTheme.primaryOrange,
@@ -165,7 +173,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         Expanded(
                           child: _buildStatCard(
                             icon: Icons.stars_rounded,
-                            value: '${dashboard?.client.points ?? 0}',
+                            value: dashboard?.client.points ?? 0,
                             label: 'Puntos',
                             sublabel: 'Acumulados',
                             color: AppTheme.warningColor,
@@ -305,6 +313,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         letterSpacing: 2,
                       ),
                     ),
+                    if (membership.isActive) ...[
+                      const SizedBox(width: AppTheme.spacing8),
+                      const VipBadge(),
+                    ],
                     const Spacer(),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -491,7 +503,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   // ── Stat card ─────────────────────────────────────────────────────────────────
   Widget _buildStatCard({
     required IconData icon,
-    required String value,
+    required num value,
     required String label,
     required String sublabel,
     required Color color,
@@ -516,8 +528,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             child: Icon(icon, color: color, size: 22),
           ),
           const SizedBox(height: AppTheme.spacing12),
-          Text(
-            value,
+          AnimatedStatCounter(
+            value: value,
             style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
           ),
           const SizedBox(height: 2),

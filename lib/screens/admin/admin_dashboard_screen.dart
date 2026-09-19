@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import '../../config/theme.dart';
 import '../../providers/admin_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../auth/login_screen.dart';
+import '../../widgets/animated_stat_counter.dart';
+import '../../widgets/fade_slide_in.dart';
 
 class AdminDashboardScreen extends StatelessWidget {
   const AdminDashboardScreen({super.key});
@@ -27,7 +30,7 @@ class AdminDashboardScreen extends StatelessWidget {
           child: CustomScrollView(
             slivers: [
               SliverToBoxAdapter(
-                child: _buildHeader(context, user?.name ?? 'Admin'),
+                child: FadeSlideIn(child: _buildHeader(context, user?.name ?? 'Admin')),
               ),
               if (provider.loadingStats)
                 const SliverToBoxAdapter(
@@ -40,12 +43,18 @@ class AdminDashboardScreen extends StatelessWidget {
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   sliver: SliverToBoxAdapter(
-                    child: _buildStatsGrid(context, provider),
+                    child: FadeSlideIn(
+                      delay: 100.ms,
+                      child: _buildStatsGrid(context, provider),
+                    ),
                   ),
                 ),
               if (provider.expiringClients.isNotEmpty)
                 SliverToBoxAdapter(
-                  child: _buildExpiringSection(context, provider),
+                  child: FadeSlideIn(
+                    delay: 200.ms,
+                    child: _buildExpiringSection(context, provider),
+                  ),
                 ),
               const SliverToBoxAdapter(child: SizedBox(height: 24)),
             ],
@@ -149,37 +158,39 @@ class AdminDashboardScreen extends StatelessWidget {
             _StatCard(
               icon: Icons.how_to_reg_rounded,
               label: 'Asistencias hoy',
-              value: '${stats.todayAttendance}',
+              value: stats.todayAttendance,
               color: Colors.blue,
             ),
             _StatCard(
               icon: Icons.people_rounded,
               label: 'Clientes activos',
-              value: '${stats.totalActiveClients}',
+              value: stats.totalActiveClients,
               color: Colors.green,
             ),
             _StatCard(
               icon: Icons.warning_amber_rounded,
               label: 'Vencen en 7 días',
-              value: '${stats.expiringSoon}',
+              value: stats.expiringSoon,
               color: Colors.orange,
             ),
             _StatCard(
               icon: Icons.cancel_rounded,
               label: 'Membresías vencidas',
-              value: '${stats.expiredMemberships}',
+              value: stats.expiredMemberships,
               color: Colors.red,
             ),
             _StatCard(
               icon: Icons.person_add_rounded,
               label: 'Nuevos este mes',
-              value: '${stats.newClientsMonth}',
+              value: stats.newClientsMonth,
               color: Colors.purple,
             ),
             _StatCard(
               icon: Icons.attach_money_rounded,
               label: 'Ventas hoy',
-              value: 'S/ ${stats.todayRevenue.toStringAsFixed(2)}',
+              value: stats.todayRevenue,
+              prefix: 'S/ ',
+              decimals: 2,
               color: Colors.teal,
             ),
           ],
@@ -200,7 +211,11 @@ class AdminDashboardScreen extends StatelessWidget {
                   .titleMedium
                   ?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
-          ...provider.expiringClients.take(5).map((c) => Card(
+          ...provider.expiringClients.take(5).toList().asMap().entries.map((entry) {
+            final c = entry.value;
+            return FadeSlideIn(
+              delay: Duration(milliseconds: entry.key * 60),
+              child: Card(
                 margin: const EdgeInsets.only(bottom: 8),
                 child: ListTile(
                   leading: CircleAvatar(
@@ -239,7 +254,9 @@ class AdminDashboardScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-              )),
+              ),
+            );
+          }),
         ],
       ),
     );
@@ -249,14 +266,20 @@ class AdminDashboardScreen extends StatelessWidget {
 class _StatCard extends StatelessWidget {
   final IconData icon;
   final String label;
-  final String value;
+  final num value;
   final Color color;
+  final String prefix;
+  final String suffix;
+  final int decimals;
 
   const _StatCard({
     required this.icon,
     required this.label,
     required this.value,
     required this.color,
+    this.prefix = '',
+    this.suffix = '',
+    this.decimals = 0,
   });
 
   @override
@@ -288,7 +311,11 @@ class _StatCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(value,
+              AnimatedStatCounter(
+                  value: value,
+                  prefix: prefix,
+                  suffix: suffix,
+                  decimals: decimals,
                   style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,

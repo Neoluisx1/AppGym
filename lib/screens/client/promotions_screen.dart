@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../config/theme.dart';
 import '../../core/services/api_service.dart';
 import '../../core/constants/api_constants.dart';
+import '../../widgets/vip_badge.dart';
 import 'main_screen.dart';
 
 class PromotionsScreen extends StatefulWidget {
@@ -147,7 +148,7 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
                   },
                   itemBuilder: (context, index) {
                     final promo = _promotions[index];
-                    return _buildPromoBanner(promo);
+                    return _buildPromoBanner(promo, isFeatured: index == 0);
                   },
                 ),
               ),
@@ -203,7 +204,7 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
     );
   }
 
-  Widget _buildPromoBanner(Map<String, dynamic> promo) {
+  Widget _buildPromoBanner(Map<String, dynamic> promo, {bool isFeatured = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: GestureDetector(
@@ -304,6 +305,13 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
                     ),
                   ),
                 ),
+
+                if (isFeatured)
+                  Positioned(
+                    top: 16,
+                    right: 16,
+                    child: const VipBadge(label: 'DESTACADO', fontSize: 11),
+                  ),
               ],
             ),
           ),

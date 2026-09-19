@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../config/theme.dart';
 import '../../providers/routine_provider.dart';
+import '../../widgets/fade_slide_in.dart';
 import 'routine_detail_screen.dart';
 
 class RoutinesListScreen extends StatefulWidget {
@@ -40,7 +41,10 @@ class _RoutinesListScreenState extends State<RoutinesListScreen> {
                     itemCount: provider.routines.length,
                     itemBuilder: (context, index) {
                       final routine = provider.routines[index];
-                      return _buildRoutineCard(routine);
+                      return FadeSlideIn(
+                        delay: Duration(milliseconds: (index % 6) * 60),
+                        child: _buildRoutineCard(routine),
+                      );
                     },
                   ),
                 ),

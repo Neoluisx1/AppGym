@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../config/theme.dart';
 import '../../core/services/api_service.dart';
 import '../../core/constants/api_constants.dart';
+import '../../widgets/fade_slide_in.dart';
 import 'trainer_nutrition_form_screen.dart';
 
 class _NutritionPlan {
@@ -155,7 +156,10 @@ class _TrainerNutritionScreenState extends State<TrainerNutritionScreen> {
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
       itemCount: _plans.length,
-      itemBuilder: (_, i) => _buildCard(_plans[i]),
+      itemBuilder: (_, i) => FadeSlideIn(
+        delay: Duration(milliseconds: (i % 6) * 60),
+        child: _buildCard(_plans[i]),
+      ),
     );
   }
 

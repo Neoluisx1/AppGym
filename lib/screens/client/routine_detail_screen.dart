@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../config/theme.dart';
 import '../../providers/routine_provider.dart';
 import '../../models/routine_model.dart';
+import '../../widgets/fade_slide_in.dart';
 
 class RoutineDetailScreen extends StatefulWidget {
   final int routineId;
@@ -39,15 +40,18 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
                   padding: const EdgeInsets.all(AppTheme.spacing16),
                   children: [
                     // Header card
-                    _buildHeader(routine),
+                    FadeSlideIn(child: _buildHeader(routine)),
                     const SizedBox(height: AppTheme.spacing24),
 
                     // Days
                     if (routine.days.isEmpty)
                       _buildEmptyExercises()
                     else
-                      ...routine.days.map(
-                        (day) => _buildDaySection(day, provider),
+                      ...routine.days.asMap().entries.map(
+                        (entry) => FadeSlideIn(
+                          delay: Duration(milliseconds: 100 + (entry.key % 6) * 60),
+                          child: _buildDaySection(entry.value, provider),
+                        ),
                       ),
 
                     const SizedBox(height: AppTheme.spacing32),

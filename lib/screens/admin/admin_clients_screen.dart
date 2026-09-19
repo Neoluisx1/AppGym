@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../../providers/admin_provider.dart';
 import '../../models/admin_model.dart';
+import '../../widgets/fade_slide_in.dart';
 import 'admin_client_detail_screen.dart';
 
 class AdminClientsScreen extends StatefulWidget {
@@ -103,8 +104,10 @@ class _ExpiringTab extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         itemCount: provider.expiringClients.length,
         separatorBuilder: (_, __) => const SizedBox(height: 8),
-        itemBuilder: (context, i) =>
-            _ExpiringClientCard(client: provider.expiringClients[i]),
+        itemBuilder: (context, i) => FadeSlideIn(
+          delay: Duration(milliseconds: (i % 6) * 60),
+          child: _ExpiringClientCard(client: provider.expiringClients[i]),
+        ),
       ),
     );
   }
@@ -241,8 +244,10 @@ class _SearchTab extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
               itemCount: provider.searchResults.length,
               separatorBuilder: (_, __) => const SizedBox(height: 8),
-              itemBuilder: (context, i) =>
-                  _SearchClientCard(client: provider.searchResults[i]),
+              itemBuilder: (context, i) => FadeSlideIn(
+                delay: Duration(milliseconds: (i % 6) * 60),
+                child: _SearchClientCard(client: provider.searchResults[i]),
+              ),
             ),
           ),
       ],

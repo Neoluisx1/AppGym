@@ -9,6 +9,7 @@ import '../../models/trainer_model.dart';
 import 'trainer_clients_screen.dart';
 import 'trainer_client_detail_screen.dart';
 import '../auth/login_screen.dart';
+import '../../widgets/animated_stat_counter.dart';
 
 class TrainerDashboardScreen extends StatelessWidget {
   const TrainerDashboardScreen({super.key});
@@ -173,28 +174,28 @@ class TrainerDashboardScreen extends StatelessWidget {
         _buildStatCard(
           context,
           icon: Icons.people_rounded,
-          value: '${stats?.totalClients ?? 0}',
+          value: stats?.totalClients ?? 0,
           label: 'Total clientes',
           color: AppTheme.infoColor,
         ),
         _buildStatCard(
           context,
           icon: Icons.check_circle_outline_rounded,
-          value: '${stats?.activeClients ?? 0}',
+          value: stats?.activeClients ?? 0,
           label: 'Activos',
           color: AppTheme.successColor,
         ),
         _buildStatCard(
           context,
           icon: Icons.flag_rounded,
-          value: '${stats?.pendingGoals ?? 0}',
+          value: stats?.pendingGoals ?? 0,
           label: 'Metas activas',
           color: AppTheme.warningColor,
         ),
         _buildStatCard(
           context,
           icon: Icons.fitness_center_rounded,
-          value: '${stats?.todayAttendances ?? 0}',
+          value: stats?.todayAttendances ?? 0,
           label: 'Asistencias hoy',
           color: AppTheme.primaryOrange,
         ),
@@ -205,7 +206,7 @@ class TrainerDashboardScreen extends StatelessWidget {
   Widget _buildStatCard(
     BuildContext context, {
     required IconData icon,
-    required String value,
+    required num value,
     required String label,
     required Color color,
   }) {
@@ -232,8 +233,8 @@ class TrainerDashboardScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  value,
+                AnimatedStatCounter(
+                  value: value,
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,

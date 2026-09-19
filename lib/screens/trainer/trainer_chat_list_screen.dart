@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../config/theme.dart';
 import '../../providers/chat_provider.dart';
 import '../../models/chat_model.dart';
+import '../../widgets/fade_slide_in.dart';
 
 class TrainerChatListScreen extends StatefulWidget {
   const TrainerChatListScreen({super.key});
@@ -42,7 +43,10 @@ class _TrainerChatListScreenState extends State<TrainerChatListScreen> {
       padding: const EdgeInsets.all(AppTheme.spacing16),
       itemCount: clients.length,
       separatorBuilder: (_, __) => const SizedBox(height: AppTheme.spacing8),
-      itemBuilder: (_, i) => _buildClientTile(clients[i]),
+      itemBuilder: (_, i) => FadeSlideIn(
+        delay: Duration(milliseconds: (i % 6) * 60),
+        child: _buildClientTile(clients[i]),
+      ),
     );
   }
 

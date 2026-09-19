@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../config/theme.dart';
 import '../../providers/notification_provider.dart';
 import '../../models/notification_model.dart';
+import '../../widgets/fade_slide_in.dart';
 import 'membership_plans_screen.dart';
 import 'group_classes_screen.dart';
 import 'surveys_screen.dart';
@@ -56,7 +57,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       itemCount: notificationProvider.notifications.length,
                       itemBuilder: (context, index) {
                         final notification = notificationProvider.notifications[index];
-                        return _buildNotificationCard(notification, notificationProvider);
+                        return FadeSlideIn(
+                          delay: Duration(milliseconds: (index % 6) * 60),
+                          child: _buildNotificationCard(notification, notificationProvider),
+                        );
                       },
                     ),
             ),

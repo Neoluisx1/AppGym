@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../config/theme.dart';
 import '../../providers/group_class_provider.dart';
 import '../../models/group_class_model.dart';
+import '../../widgets/fade_slide_in.dart';
 
 class GroupClassesScreen extends StatefulWidget {
   const GroupClassesScreen({Key? key}) : super(key: key);
@@ -40,7 +41,10 @@ class _GroupClassesScreenState extends State<GroupClassesScreen> {
                       itemCount: classProvider.classes.length,
                       itemBuilder: (context, index) {
                         final groupClass = classProvider.classes[index];
-                        return _buildClassCard(groupClass, classProvider);
+                        return FadeSlideIn(
+                          delay: Duration(milliseconds: (index % 6) * 60),
+                          child: _buildClassCard(groupClass, classProvider),
+                        );
                       },
                     ),
             ),

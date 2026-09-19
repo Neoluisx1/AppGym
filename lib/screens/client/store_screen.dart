@@ -5,6 +5,7 @@ import '../../config/theme.dart';
 import '../../providers/store_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../models/product_model.dart';
+import '../../widgets/fade_slide_in.dart';
 import 'my_redemptions_screen.dart';
 
 class StoreScreen extends StatefulWidget {
@@ -107,10 +108,13 @@ class _StoreScreenState extends State<StoreScreen> {
                           padding: EdgeInsets.symmetric(horizontal: AppTheme.spacing16),
                           itemCount: storeProvider.featuredProducts.length,
                           itemBuilder: (context, index) {
-                            return _buildFeaturedProductCard(
-                              storeProvider.featuredProducts[index],
-                              storeProvider,
-                              userPoints,
+                            return FadeSlideIn(
+                              delay: Duration(milliseconds: (index % 6) * 60),
+                              child: _buildFeaturedProductCard(
+                                storeProvider.featuredProducts[index],
+                                storeProvider,
+                                userPoints,
+                              ),
                             );
                           },
                         ),
@@ -144,10 +148,13 @@ class _StoreScreenState extends State<StoreScreen> {
                             ),
                             delegate: SliverChildBuilderDelegate(
                               (context, index) {
-                                return _buildProductCard(
-                                  storeProvider.filteredProducts[index],
-                                  storeProvider,
-                                  userPoints,
+                                return FadeSlideIn(
+                                  delay: Duration(milliseconds: (index % 6) * 60),
+                                  child: _buildProductCard(
+                                    storeProvider.filteredProducts[index],
+                                    storeProvider,
+                                    userPoints,
+                                  ),
                                 );
                               },
                               childCount: storeProvider.filteredProducts.length,

@@ -22,6 +22,11 @@ class AppTheme {
   static const Color primaryOrangeLight = Color(0xFFFB923C);
   static const Color primaryOrangeDark  = Color(0xFFEA580C);
 
+  // ── Gold accent (solo momentos VIP/premium: membresía, puntos) ────────────────
+  static const Color accentGold      = Color(0xFFD4AF37); // igual al gold.400 de la landing
+  static const Color accentGoldLight = Color(0xFFEAD48D); // gold.200
+  static const Color accentGoldDark  = Color(0xFFA67C1E); // gold.600
+
   // ── Text ────────────────────────────────────────────────────────────────────
   static const Color textPrimary   = Color(0xFFFFFFFF);
   static const Color textSecondary = Color(0xFFAAAAAA);
@@ -61,6 +66,13 @@ class AppTheme {
     end: Alignment.bottomRight,
   );
 
+  /// Degradado naranja→dorado para acentos VIP (membresía destacada, badges premium).
+  static const LinearGradient vipGradient = LinearGradient(
+    colors: [primaryOrange, accentGold],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
   static const LinearGradient backgroundGradient = LinearGradient(
     colors: [backgroundDark, surfaceDark],
     begin: Alignment.topCenter,
@@ -95,6 +107,16 @@ class AppTheme {
       color: Colors.black.withValues(alpha: 0.25),
       blurRadius: 8,
       offset: const Offset(0, 3),
+    ),
+  ];
+
+  /// Glow dorado para la ÚNICA tarjeta más "premium" de una pantalla
+  /// (membresía activa, plan destacado) — no para uso general.
+  static List<BoxShadow> get goldGlowShadow => [
+    BoxShadow(
+      color: accentGold.withValues(alpha: 0.45),
+      blurRadius: 20,
+      spreadRadius: 1,
     ),
   ];
 
@@ -150,6 +172,12 @@ class AppTheme {
         outline: lightBorder,
       ),
       scaffoldBackgroundColor: lightBackground,
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        },
+      ),
       appBarTheme: AppBarTheme(
         backgroundColor: lightSurface,
         foregroundColor: lightTextPrimary,
@@ -287,6 +315,12 @@ class AppTheme {
         onSurface: textPrimary,
       ),
       scaffoldBackgroundColor: backgroundDark,
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        },
+      ),
       appBarTheme: AppBarTheme(
         backgroundColor: backgroundDark,
         foregroundColor: textPrimary,

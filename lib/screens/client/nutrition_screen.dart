@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../config/theme.dart';
 import '../../providers/nutrition_provider.dart';
 import '../../models/nutrition_model.dart';
+import '../../widgets/fade_slide_in.dart';
 
 class NutritionScreen extends StatefulWidget {
   const NutritionScreen({super.key});
@@ -45,7 +46,10 @@ class _NutritionScreenState extends State<NutritionScreen> {
       itemCount: provider.plans.length,
       itemBuilder: (context, index) {
         final plan = provider.plans[index];
-        return _buildPlanCard(plan, provider);
+        return FadeSlideIn(
+          delay: Duration(milliseconds: (index % 6) * 60),
+          child: _buildPlanCard(plan, provider),
+        );
       },
     );
   }
@@ -96,19 +100,25 @@ class _NutritionScreenState extends State<NutritionScreen> {
       padding: const EdgeInsets.all(AppTheme.spacing16),
       children: [
         // Header
-        _buildPlanHeader(plan),
+        FadeSlideIn(child: _buildPlanHeader(plan)),
         const SizedBox(height: AppTheme.spacing24),
 
         // Meals
         Text('Comidas del día', style: context.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: AppTheme.spacing12),
 
-        ...plan.meals.map((meal) => _buildMealCard(meal)),
+        ...plan.meals.asMap().entries.map((entry) => FadeSlideIn(
+              delay: Duration(milliseconds: 100 + (entry.key % 6) * 60),
+              child: _buildMealCard(entry.value),
+            )),
 
         // Totals
         if (plan.meals.isNotEmpty) ...[
           const SizedBox(height: AppTheme.spacing16),
-          _buildTotalsCard(plan),
+          FadeSlideIn(
+            delay: Duration(milliseconds: 100 + plan.meals.length * 60),
+            child: _buildTotalsCard(plan),
+          ),
         ],
 
         const SizedBox(height: AppTheme.spacing32),
