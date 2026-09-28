@@ -59,16 +59,16 @@ class _TrainerGoalFormScreenState extends State<TrainerGoalFormScreen> {
 
     final data = <String, dynamic>{
       'title': _titleCtrl.text.trim(),
-      'goal_type': _goalType,
+      'type': _goalType,
+      'target_date': _endCtrl.text,
     };
     if (_descCtrl.text.isNotEmpty) data['description'] = _descCtrl.text.trim();
     if (_targetCtrl.text.isNotEmpty) data['target_value'] = double.tryParse(_targetCtrl.text);
     if (_unitCtrl.text.isNotEmpty) data['unit'] = _unitCtrl.text.trim();
     if (_notesCtrl.text.isNotEmpty) data['notes'] = _notesCtrl.text.trim();
-    if (_startCtrl.text.isNotEmpty) data['start_date'] = _startCtrl.text;
-    if (_endCtrl.text.isNotEmpty) data['end_date'] = _endCtrl.text;
 
-    final ok = await context.read<TrainerProvider>().createGoal(widget.clientId, data);
+    final provider = context.read<TrainerProvider>();
+    final ok = await provider.createGoal(widget.clientId, data);
     if (!mounted) return;
     if (ok) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -77,7 +77,10 @@ class _TrainerGoalFormScreenState extends State<TrainerGoalFormScreen> {
       Navigator.of(context).pop(true);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error al crear la meta'), backgroundColor: AppTheme.errorColor),
+        SnackBar(
+          content: Text(provider.error ?? 'Error al crear la meta'),
+          backgroundColor: AppTheme.errorColor,
+        ),
       );
     }
   }
@@ -136,7 +139,7 @@ class _TrainerGoalFormScreenState extends State<TrainerGoalFormScreen> {
               children: [
                 Expanded(child: _datePicker('Fecha inicio', _startCtrl)),
                 const SizedBox(width: 8),
-                Expanded(child: _datePicker('Fecha límite', _endCtrl)),
+                Expanded(child: _datePicker('Fecha límite *', _endCtrl, required: true)),
               ],
             ),
             const SizedBox(height: AppTheme.spacing8),
@@ -183,11 +186,12 @@ class _TrainerGoalFormScreenState extends State<TrainerGoalFormScreen> {
         validator: required ? (v) => (v == null || v.trim().isEmpty) ? 'Requerido' : null : null,
       );
 
-  Widget _datePicker(String label, TextEditingController ctrl) => TextFormField(
+  Widget _datePicker(String label, TextEditingController ctrl, {bool required = false}) => TextFormField(
         controller: ctrl,
         readOnly: true,
         onTap: () => _pickDate(ctrl),
         decoration: _decor(label, suffix: const Icon(Icons.calendar_today, size: 18)),
+        validator: required ? (v) => (v == null || v.trim().isEmpty) ? 'Requerido' : null : null,
       );
 
   InputDecoration _decor(String label, {Widget? suffix}) => InputDecoration(

@@ -129,7 +129,7 @@ class _TrainerNutritionFormScreenState extends State<TrainerNutritionFormScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: AppTheme.errorColor),
+          SnackBar(content: Text(e.toString()), backgroundColor: AppTheme.errorColor),
         );
       }
     }

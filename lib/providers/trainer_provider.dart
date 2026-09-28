@@ -154,6 +154,7 @@ class TrainerProvider extends ChangeNotifier {
 
   Future<bool> createGoal(int clientId, Map<String, dynamic> data) async {
     _submitting = true;
+    _error = null;
     notifyListeners();
     try {
       final response = await _api.post(ApiConstants.trainerClientGoals(clientId), data: data);
@@ -163,7 +164,9 @@ class TrainerProvider extends ChangeNotifier {
         notifyListeners();
         return true;
       }
-    } catch (_) {}
+    } catch (e) {
+      _error = e.toString();
+    }
     _submitting = false;
     notifyListeners();
     return false;
